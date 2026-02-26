@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MP4 → MP3 konwerter</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: Inter, system-ui, Arial, sans-serif;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: #111827;
+        color: #e5e7eb;
+      }
+
+      .card {
+        width: min(720px, 92vw);
+        background: #1f2937;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.3);
+      }
+
+      h1 {
+        margin-top: 0;
+      }
+
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        margin: 1rem 0;
+      }
+
+      input[type="file"] {
+        flex: 1;
+      }
+
+      button {
+        border: none;
+        background: #2563eb;
+        color: white;
+        padding: 0.7rem 1rem;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .status {
+        margin: 0.8rem 0;
+        color: #93c5fd;
+      }
+
+      audio {
+        width: 100%;
+        margin-top: 0.8rem;
+      }
+
+      .muted {
+        color: #9ca3af;
+        font-size: 0.9rem;
+      }
+
+      a.download {
+        color: #93c5fd;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <h1>Konwerter MP4 → MP3</h1>
+      <p>Załaduj plik MP4, przekonwertuj go na MP3, a potem odtwarzaj w pętli.</p>
+
+      <div class="row">
+        <input id="videoInput" type="file" accept="video/mp4" />
+        <button id="convertBtn">Konwertuj do MP3</button>
+      </div>
+
+      <p id="status" class="status">Wybierz plik MP4.</p>
+
+      <label>
+        <input type="checkbox" id="loopToggle" checked />
+        Zapętl odtwarzanie
+      </label>
+
+      <audio id="audioPlayer" controls loop></audio>
+      <p><a id="downloadLink" class="download" hidden>Pobierz MP3</a></p>
+
+      <p class="muted">
+        Konwersja odbywa się lokalnie w przeglądarce przez FFmpeg (WebAssembly).
+      </p>
+    </main>
+
+    <script type="module">
+      import { FFmpeg } from 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/esm/index.js';
+      import { fetchFile, toBlobURL } from 'https://unpkg.com/@ffmpeg/util@0.12.1/dist/esm/index.js';
+
+      const input = document.getElementById('videoInput');
+      const convertBtn = document.getElementById('convertBtn');
+      const status = document.getElementById('status');
+      const audioPlayer = document.getElementById('audioPlayer');
+      const loopToggle = document.getElementById('loopToggle');
+      const downloadLink = document.getElementById('downloadLink');
+
+      let ffmpeg;
+
+      async function getFFmpeg() {
+        if (ffmpeg) return ffmpeg;
+
+        ffmpeg = new FFmpeg();
+        status.textContent = 'Ładowanie silnika FFmpeg...';
+
+        const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm';
+        await ffmpeg.load({
+          coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+          wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+        });
+
+        return ffmpeg;
+      }
+
+      convertBtn.addEventListener('click', async () => {
+        const file = input.files?.[0];
+        if (!file) {
+          status.textContent = 'Najpierw wybierz plik MP4.';
+          return;
+        }
+
+        convertBtn.disabled = true;
+        downloadLink.hidden = true;
+
+        try {
+          const engine = await getFFmpeg();
+          status.textContent = 'Przetwarzanie MP4 na MP3...';
+
+          const inputName = 'input.mp4';
+          const outputName = 'output.mp3';
+
+          await engine.writeFile(inputName, await fetchFile(file));
+          await engine.exec(['-i', inputName, '-vn', '-codec:a', 'libmp3lame', '-q:a', '2', outputName]);
+
+          const data = await engine.readFile(outputName);
+          const mp3Blob = new Blob([data.buffer], { type: 'audio/mpeg' });
+          const mp3Url = URL.createObjectURL(mp3Blob);
+
+          audioPlayer.src = mp3Url;
+          audioPlayer.loop = loopToggle.checked;
+          downloadLink.href = mp3Url;
+          downloadLink.download = `${file.name.replace(/\.mp4$/i, '') || 'audio'}.mp3`;
+          downloadLink.hidden = false;
+          downloadLink.textContent = 'Pobierz przekonwertowane MP3';
+
+          status.textContent = 'Gotowe! Możesz odtwarzać i zapętlać audio.';
+        } catch (error) {
+          console.error(error);
+          status.textContent = 'Wystąpił błąd podczas konwersji. Spróbuj ponownie.';
+        } finally {
+          convertBtn.disabled = false;
+        }
+      });
+
+      loopToggle.addEventListener('change', () => {
+        audioPlayer.loop = loopToggle.checked;
+      });
+    </script>
+  </body>
+</html>
