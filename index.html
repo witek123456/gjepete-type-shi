@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bastion Barbershop | Środa Śląska</title>
+  <meta name="description" content="Bastion Barbershop w Środzie Śląskiej — rzemiosło, styl i precyzja." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --card: #1a1a1a;
+      --accent: #c9a84c;
+      --text: #ffffff;
+      --muted: #888888;
+      --border: rgba(201, 168, 76, 0.25);
+      --shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: 'Lato', serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(201,168,76,0.07), transparent 45%),
+        radial-gradient(circle at 80% 10%, rgba(201,168,76,0.05), transparent 38%),
+        radial-gradient(circle at 10% 90%, rgba(201,168,76,0.06), transparent 40%),
+        repeating-radial-gradient(circle at 0 0, rgba(255,255,255,0.02) 0 1px, transparent 1px 5px);
+      z-index: -2;
+    }
+
+    .parallax {
+      background-attachment: fixed;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .parallax::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(10,10,10,0.68), rgba(10,10,10,0.92));
+      z-index: 0;
+    }
+
+    .container {
+      width: min(1120px, 92%);
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: background 0.35s ease, backdrop-filter 0.35s ease, border-color 0.35s ease;
+      border-bottom: 1px solid transparent;
+    }
+
+    .navbar.scrolled {
+      background: rgba(10, 10, 10, 0.72);
+      backdrop-filter: blur(10px);
+      border-color: rgba(201, 168, 76, 0.24);
+    }
+
+    .nav-wrap {
+      min-height: 72px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand {
+      font-family: 'Playfair Display', serif;
+      letter-spacing: 0.12em;
+      font-size: 1rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 0.85rem;
+    }
+
+    .nav-links a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus-visible { color: var(--accent); }
+
+    section { padding: 4.8rem 0; }
+
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      background-image:
+        linear-gradient(to bottom, rgba(10,10,10,0.4), rgba(10,10,10,0.7)),
+        url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=1600&q=80');
+    }
+
+    .hero-content { max-width: 860px; }
+
+    .hero h1,
+    .hero h2,
+    .hero p,
+    .hero .cta { opacity: 0; transform: translateY(24px); }
+
+    .hero.reveal-active h1 { animation: rise 0.9s ease forwards; }
+    .hero.reveal-active h2 { animation: rise 0.9s 0.15s ease forwards; }
+    .hero.reveal-active p { animation: rise 0.9s 0.3s ease forwards; }
+    .hero.reveal-active .cta { animation: rise 0.9s 0.45s ease forwards; }
+
+    .hero h1,
+    .hero h2,
+    h2.section-title {
+      margin: 0;
+      font-family: 'Playfair Display', serif;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 10vw, 6.4rem);
+      color: var(--accent);
+      line-height: 0.95;
+    }
+
+    .hero h2 {
+      font-size: clamp(1.2rem, 4vw, 2.3rem);
+      margin-top: 0.8rem;
+      color: var(--text);
+    }
+
+    .hero .subtitle {
+      margin: 0.8rem 0 0;
+      font-size: clamp(0.95rem, 2.6vw, 1.35rem);
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .hero .tagline {
+      margin: 1.3rem auto 2rem;
+      max-width: 620px;
+      font-size: clamp(1rem, 2.8vw, 1.35rem);
+      color: #e4e4e4;
+    }
+
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--accent);
+      color: var(--text);
+      text-decoration: none;
+      background: linear-gradient(135deg, rgba(201,168,76,0.12), rgba(201,168,76,0.03));
+      padding: 0.85rem 1.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      border-radius: 2px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .cta:hover,
+    .cta:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(201, 168, 76, 0.22);
+      background: linear-gradient(135deg, rgba(201,168,76,0.22), rgba(201,168,76,0.08));
+    }
+
+    .section-title {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      margin-bottom: 1.1rem;
+      color: var(--accent);
+    }
+
+    .section-lead {
+      margin: 0;
+      color: #d3d3d3;
+      max-width: 760px;
+    }
+
+    .highlights {
+      margin-top: 1.8rem;
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .chip {
+      background: linear-gradient(180deg, rgba(201,168,76,0.10), rgba(201,168,76,0.02));
+      border: 1px solid var(--border);
+      padding: 0.9rem 1rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      color: #efefef;
+    }
+
+    .cards-grid {
+      margin-top: 2rem;
+      display: grid;
+      gap: 1.2rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(26,26,26,0.95), rgba(18,18,18,0.95));
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 1.25rem;
+      position: relative;
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: var(--shadow);
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: var(--accent);
+      box-shadow: 0 24px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(201,168,76,0.17);
+    }
+
+    .service-price {
+      font-size: 1.1rem;
+      color: var(--accent);
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .card .cta { margin-top: 1rem; width: 100%; }
+
+    .team-member {
+      text-align: center;
+      padding-top: 1.4rem;
+    }
+
+    .avatar {
+      width: 74px;
+      height: 74px;
+      border-radius: 50%;
+      margin: 0 auto 0.8rem;
+      border: 2px solid var(--accent);
+      display: grid;
+      place-items: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      color: var(--accent);
+      background: radial-gradient(circle, rgba(201,168,76,0.12), rgba(10,10,10,0.9));
+    }
+
+    .stars {
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      margin-bottom: 0.6rem;
+      display: inline-block;
+    }
+
+    form {
+      margin-top: 1.4rem;
+      display: grid;
+      gap: 0.85rem;
+      grid-template-columns: 1fr;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    label { font-size: 0.9rem; color: #ddd; }
+
+    input, select {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: #121212;
+      color: var(--text);
+      padding: 0.78rem 0.8rem;
+      font: inherit;
+      border-radius: 2px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.16);
+    }
+
+    .booking-note { margin-top: 0.85rem; color: var(--muted); }
+
+    .booking-status {
+      margin-top: 1rem;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(201,168,76,0.08), rgba(201,168,76,0.02));
+      padding: 0.9rem 1rem;
+      display: none;
+    }
+
+    .booking-status.visible { display: block; }
+
+    .booking-actions {
+      margin-top: 0.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .booking-actions a {
+      color: var(--text);
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 0.5rem 0.75rem;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .booking-actions a:hover { border-color: var(--accent); color: var(--accent); }
+
+    .footer {
+      padding: 2.2rem 0;
+      border-top: 1px solid rgba(255,255,255,0.11);
+      background: #080808;
+    }
+
+    .footer-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .socials a {
+      color: var(--accent);
+      text-decoration: none;
+      margin-right: 0.9rem;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .toast {
+      position: fixed;
+      right: 1rem;
+      bottom: 1rem;
+      background: #121212;
+      border: 1px solid var(--accent);
+      color: var(--text);
+      padding: 0.9rem 1rem;
+      max-width: 280px;
+      font-size: 0.92rem;
+      opacity: 0;
+      transform: translateY(16px);
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      z-index: 200;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (min-width: 700px) {
+      .highlights { grid-template-columns: repeat(3, 1fr); }
+      form { grid-template-columns: repeat(2, 1fr); }
+      .full { grid-column: 1 / -1; }
+      .footer-grid { grid-template-columns: repeat(3, 1fr); align-items: start; }
+      .nav-links a { font-size: 0.78rem; }
+    }
+
+    @media (max-width: 600px) {
+      .nav-wrap { flex-direction: column; align-items: flex-start; padding: 0.8rem 0; }
+      .nav-links { gap: 0.65rem; }
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar" id="navbar">
+    <div class="container nav-wrap">
+      <a href="#hero" class="brand">Bastion</a>
+      <nav class="nav-links" aria-label="Nawigacja główna">
+        <a href="#o-nas">O nas</a>
+        <a href="#uslugi">Usługi</a>
+        <a href="#zespol">Zespół</a>
+        <a href="#opinie">Opinie</a>
+        <a href="#rezerwacja">Rezerwacja</a>
+        <a href="#kontakt">Kontakt</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero parallax reveal-active" id="hero">
+      <div class="container hero-content">
+        <h1>BASTION</h1>
+        <h2>BARBERSHOP</h2>
+        <p class="subtitle">Środa Śląska</p>
+        <p class="tagline">Rzemiosło, Styl, Precyzja</p>
+        <a class="cta" href="#rezerwacja">Umów wizytę</a>
+      </div>
+    </section>
+
+    <section id="o-nas" class="reveal">
+      <div class="container">
+        <h2 class="section-title">O nas</h2>
+        <p class="section-lead">Bastion Barbershop to profesjonalny barbershop w sercu Środy Śląskiej — miejsce, gdzie klasyczne rzemiosło spotyka nowoczesne podejście do męskiego stylu.</p>
+        <div class="highlights">
+          <div class="chip">Doświadczeni barberzy</div>
+          <div class="chip">Indywidualne podejście</div>
+          <div class="chip">Najwyższy standard</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="uslugi" class="reveal parallax" style="background-image: linear-gradient(to bottom, rgba(10,10,10,0.7), rgba(10,10,10,0.88)), url('https://images.unsplash.com/photo-1512690459411-b0fd1c86b8bc?auto=format&fit=crop&w=1400&q=80');">
+      <div class="container">
+        <h2 class="section-title">Usługi</h2>
+        <div class="cards-grid">
+          <article class="card">
+            <h3>Strzyżenie Męskie</h3>
+            <p class="service-price">80 zł (Piotrek, Malwina, Patryk) / 50 zł — Eryk</p>
+            <p class="muted">Czas: 40–60 min</p>
+            <a href="#rezerwacja" class="cta">Umów</a>
+          </article>
+          <article class="card">
+            <h3>Combo</h3>
+            <p class="service-price">130 zł (Piotrek, Patryk, Malwina) / 100 zł — Eryk</p>
+            <p class="muted">Czas: 1g 20min–1g 30min</p>
+            <a href="#rezerwacja" class="cta">Umów</a>
+          </article>
+          <article class="card">
+            <h3>Buzz Cut</h3>
+            <p class="service-price">60 zł (Malwina, Patryk, Piotrek) / 50 zł — Eryk</p>
+            <p class="muted">Czas: 30 min</p>
+            <a href="#rezerwacja" class="cta">Umów</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="zespol" class="reveal">
+      <div class="container">
+        <h2 class="section-title">Nasz zespół</h2>
+        <div class="cards-grid">
+          <article class="card team-member">
+            <div class="avatar">P</div>
+            <h3>Piotrek</h3>
+            <p class="muted">Szef, Mistrz Rzemiosła</p>
+          </article>
+          <article class="card team-member">
+            <div class="avatar">E</div>
+            <h3>Eryk</h3>
+            <p class="muted">Fachowiec z pasją</p>
+          </article>
+          <article class="card team-member">
+            <div class="avatar">P</div>
+            <h3>Patryk</h3>
+            <p class="muted">Profesjonalista</p>
+          </article>
+          <article class="card team-member">
+            <div class="avatar">M</div>
+            <h3>Malwina</h3>
+            <p class="muted">Stylistka</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="opinie" class="reveal">
+      <div class="container">
+        <h2 class="section-title">Opinie klientów</h2>
+        <div class="cards-grid">
+          <article class="card">
+            <span class="stars">⭐⭐⭐⭐⭐</span>
+            <p>"Bardzo polecam! Strzyżenie wykonane perfekcyjnie... Pan Eryk to świetny fachowiec..."</p>
+          </article>
+          <article class="card">
+            <span class="stars">⭐⭐⭐⭐⭐</span>
+            <p>"Polecam konkretny salon. Mili Barberzy i profesjonaliści na czele z szefem Piotrem 💪"</p>
+          </article>
+          <article class="card">
+            <span class="stars">⭐⭐⭐⭐⭐</span>
+            <p>"Super podejście, atmosfera oraz nowa fryzurka 😃"</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="rezerwacja" class="reveal">
+      <div class="container">
+        <h2 class="section-title">Rezerwacja</h2>
+        <form id="booking-form">
+          <div class="field">
+            <label for="name">Imię i nazwisko</label>
+            <input id="name" name="name" type="text" required>
+          </div>
+          <div class="field">
+            <label for="phone">Telefon</label>
+            <input id="phone" name="phone" type="tel" required>
+          </div>
+          <div class="field">
+            <label for="barber">Wybór barbera</label>
+            <select id="barber" name="barber" required>
+              <option value="">Wybierz</option>
+              <option>Piotrek</option>
+              <option>Eryk</option>
+              <option>Patryk</option>
+              <option>Malwina</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="service">Wybór usługi</label>
+            <select id="service" name="service" required>
+              <option value="">Wybierz</option>
+              <option>Strzyżenie Męskie</option>
+              <option>Combo</option>
+              <option>Buzz Cut</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="date">Data</label>
+            <input id="date" name="date" type="date" required>
+          </div>
+          <div class="field">
+            <label for="time">Godzina</label>
+            <input id="time" name="time" type="time" required>
+          </div>
+          <div class="full">
+            <button class="cta" type="submit">Zarezerwuj</button>
+            <p class="booking-note">Możesz też zadzwonić: <a href="tel:+48500111222">+48 500 111 222</a> lub napisać na <a href="#">Instagramie</a>.</p>
+            <div id="booking-status" class="booking-status" aria-live="polite"></div>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer id="kontakt" class="footer">
+    <div class="container footer-grid">
+      <div>
+        <h3>Kontakt</h3>
+        <p class="muted">Adres: Środa Śląska</p>
+      </div>
+      <div>
+        <h3>Godziny</h3>
+        <p class="muted">Pon–Sob 9:00–19:00<br>Nd — nieczynne</p>
+      </div>
+      <div>
+        <h3>Social</h3>
+        <p class="socials"><a href="#">Instagram</a><a href="#">Facebook</a></p>
+        <p class="muted">© 2025 Bastion Barbershop</p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const navbar = document.getElementById('navbar');
+    const toast = document.getElementById('toast');
+    const form = document.getElementById('booking-form');
+    const dateField = document.getElementById('date');
+
+    const onScroll = () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 20);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    dateField.min = new Date().toISOString().split('T')[0];
+
+    const revealItems = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    revealItems.forEach((el) => observer.observe(el));
+
+    const statusBox = document.getElementById('booking-status');
+    const BARBERSHOP_PHONE = '+48500111222';
+
+    const toISODateTime = (dateValue, timeValue) => {
+      const local = new Date(`${dateValue}T${timeValue}:00`);
+      const end = new Date(local.getTime() + 60 * 60 * 1000);
+      return {
+        start: local.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z',
+        end: end.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
+      };
+    };
+
+    const saveBooking = (booking) => {
+      const current = JSON.parse(localStorage.getItem('bastionBookings') || '[]');
+      current.push(booking);
+      localStorage.setItem('bastionBookings', JSON.stringify(current));
+    };
+
+    const isSlotTaken = ({ barber, date, time }) => {
+      const current = JSON.parse(localStorage.getItem('bastionBookings') || '[]');
+      return current.some((item) => item.barber === barber && item.date === date && item.time === time);
+    };
+
+    const createCalendarLink = ({ name, barber, service, date, time }) => {
+      const dt = toISODateTime(date, time);
+      const text = encodeURIComponent(`Wizyta — Bastion Barbershop (${service})`);
+      const details = encodeURIComponent(`Klient: ${name} | Barber: ${barber} | Usługa: ${service}`);
+      const location = encodeURIComponent('Bastion Barbershop, Środa Śląska');
+      return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${dt.start}%2F${dt.end}&details=${details}&location=${location}`;
+    };
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const data = new FormData(form);
+      const booking = {
+        id: `BST-${Date.now().toString().slice(-6)}`,
+        name: (data.get('name') || '').toString().trim(),
+        phone: (data.get('phone') || '').toString().trim(),
+        barber: data.get('barber'),
+        service: data.get('service'),
+        date: data.get('date'),
+        time: data.get('time')
+      };
+
+      if (isSlotTaken(booking)) {
+        toast.textContent = 'Ten termin jest już zajęty. Wybierz inną godzinę.';
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3600);
+        return;
+      }
+
+      saveBooking(booking);
+      const whatsappMsg = encodeURIComponent(`Cześć! Potwierdzam rezerwację ${booking.id}. ${booking.name}, tel. ${booking.phone}, ${booking.service}, barber: ${booking.barber}, termin: ${booking.date} ${booking.time}.`);
+      const whatsappLink = `https://wa.me/${BARBERSHOP_PHONE.replace('+', '')}?text=${whatsappMsg}`;
+      const calendarLink = createCalendarLink(booking);
+
+      statusBox.classList.add('visible');
+      statusBox.innerHTML = `
+        <strong>Rezerwacja przyjęta ✅</strong><br>
+        Numer rezerwacji: <strong>${booking.id}</strong><br>
+        Termin: <strong>${booking.date} • ${booking.time}</strong><br>
+        Barber: <strong>${booking.barber}</strong>
+        <div class="booking-actions">
+          <a href="${whatsappLink}" target="_blank" rel="noopener">Potwierdź przez WhatsApp</a>
+          <a href="tel:${BARBERSHOP_PHONE}">Zadzwoń do salonu</a>
+          <a href="${calendarLink}" target="_blank" rel="noopener">Dodaj do kalendarza</a>
+        </div>
+      `;
+
+      toast.textContent = 'Dziękujemy! Rezerwacja została zapisana.';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3200);
+      form.reset();
+    });
+  </script>
+</body>
+</html>
